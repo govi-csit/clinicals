@@ -38,6 +38,7 @@ Here are the user storeis below for the application(in agile methodology)
 
 
 ### Steps to run the App
+ - install python
  - install the packages in requirements.txt file (cmd : **pip install -r requirements.txt**)
  - create database : **clinicalsdb** and add configuration details in DATABASES section in settings.py file
  - apply migrations (cmd : **python manage.py makemigrations**)
