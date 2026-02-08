@@ -1,46 +1,143 @@
-# RESTful Application for Patient Clinical Data Collection and Reporting
+# Patient Clinical Data Management System
 
-Here are the user storeis below for the application(in agile methodology)
+A full-stack web application built with Django for managing patient records and clinical data. Designed for lab assistants to register patients, record vital signs (Blood Pressure, Height/Weight, Heart Rate), and generate analytical reports including BMI calculations.
 
-## User Story: 1
-**As a lab assistant, I want to view all the patient records**
-#### Acceptance Criteria
- - Display all the patients’ details with their id, firstName, lastName and age
- - Display the link to enter clinical data for each patient
- - Display the link to analyse data for each patient
- - Display the link to register new patients
+## Features
 
-## User Story: 2
-**As a lab assistant, I want to register a new patient**
-#### Acceptance Criteria
- - On Click of the Add Patient link the user should be navigated to the patient registration screen
- - The user should see a form that he can fill in with patient details namely firstName, lastName, and age
- - When the user click the confirm button the data should be saved and a conformation message should be displayed
- - The user should be able to navigate back to the home page
+- **Patient Management** -- Create, view, update, and delete patient records (full CRUD)
+- **Clinical Data Entry** -- Record vitals such as Blood Pressure, Height/Weight, and Heart Rate for each patient
+- **Data Analysis & Reporting** -- View patient clinical history with auto-calculated BMI from height and weight entries
+- **Responsive Table UI** -- Clean tabular interface with styled CSS for easy data browsing
 
-## User Story: 3
-**As a lab assistant, I want to enter clinical data for a patient**
-#### Acceptance Criteria
- - On click of the Add Data link on the home page the user should be navigated to the clinical data entry screen
- - The user should see a form that he can fill in with patient details such as BP or Height and Weight or or Heart rate
- - When the user click the confirm button the data should be saved and a confirmation message should be displayed
- - The user should be able to navigate back to the home screen
+## Tech Stack
 
+| Layer       | Technology          |
+|-------------|---------------------|
+| Backend     | Python, Django 3.2  |
+| Database    | MySQL (default), SQLite (Docker/testing) |
+| Frontend    | Django Templates, HTML5, CSS3 |
+| Containerization | Docker, Docker Compose |
 
+## Project Structure
 
+```
+clinicals/
+├── clinicals/                  # Django project settings
+│   ├── settings.py             # Configuration (DB, apps, middleware)
+│   ├── urls.py                 # Root URL routing
+│   ├── wsgi.py                 # WSGI entry point
+│   └── asgi.py                 # ASGI entry point
+├── clinicalsApp/               # Main application
+│   ├── models.py               # Patient & ClinicalData models
+│   ├── views.py                # Class-based & function-based views
+│   ├── forms.py                # Django ModelForms
+│   ├── tests.py                # Unit tests
+│   ├── admin.py                # Admin configuration
+│   └── migrations/             # Database migrations
+├── templates/clinicalsApp/     # HTML templates
+│   ├── patient_list.html       # Home page - patient listing
+│   ├── patient_form.html       # Create/Update patient form
+│   ├── clinicaldata_form.html  # Clinical data entry form
+│   ├── generateReport.html     # Analysis report page
+│   └── patient_confirm_delete.html
+├── static/css/
+│   └── clinicals.css           # Application styles
+├── Dockerfile                  # Docker image definition
+├── docker-compose.yml          # Multi-container orchestration
+├── requirements.txt            # Python dependencies
+└── manage.py                   # Django management CLI
+```
 
-## User Story: 4
-**As a lab assistant, I want to analyse and see a report of the latest tests**
-#### Acceptance Criteria
- - On click of the Analyse Data link on the home page the user should be navigated to page where he can see the latest entries for various clinical data
- - The body mass index should be displayed based on height and weight of the patient 
- - The user should see a link to a graph that will show the clinical regarding on a line chart over time
+## Data Models
 
+### Patient
+| Field     | Type         | Description          |
+|-----------|--------------|----------------------|
+| id        | BigAutoField | Primary key          |
+| firstName | CharField    | Patient first name   |
+| lastName  | CharField    | Patient last name    |
+| age       | IntegerField | Patient age          |
 
-### Steps to run the App
- - install python
- - install the packages in requirements.txt file (cmd : **pip install -r requirements.txt**)
- - create database : **clinicalsdb** and add configuration details in DATABASES section in settings.py file
- - apply migrations (cmd : **python manage.py makemigrations**)
- - run migrations (cmd : **python manage.py migrate**)
- - run the app (cmd : **python manage.py runserver**)
+### ClinicalData
+| Field            | Type          | Description                              |
+|------------------|---------------|------------------------------------------|
+| id               | BigAutoField  | Primary key                              |
+| componentName    | CharField     | Type: Height/Weight, Blood Pressure, Heart Rate |
+| componentValue   | CharField     | Recorded measurement value               |
+| measuredDateTime | DateTimeField | Auto-set timestamp of recording          |
+| patient          | ForeignKey    | Reference to Patient (CASCADE delete)    |
+
+## API Endpoints
+
+| Method   | URL                  | Description                    |
+|----------|----------------------|--------------------------------|
+| GET      | `/`                  | List all patients              |
+| GET/POST | `/create/`           | Register a new patient         |
+| GET/POST | `/update/<id>`       | Update patient details         |
+| GET/POST | `/delete/<id>`       | Delete patient (confirmation)  |
+| GET/POST | `/addData/<id>`      | Add clinical data for patient  |
+| GET      | `/analyze/<id>`      | View clinical report with BMI  |
+
+## Getting Started
+
+### Option 1: Run with Docker (Recommended)
+
+No need to install Python or MySQL locally.
+
+```bash
+# Clone the repository
+git clone https://github.com/govicsit/clinicals.git
+cd clinicals
+
+# Build and start containers
+docker-compose up --build
+
+# Access the application
+open http://localhost:8000
+```
+
+To stop:
+```bash
+docker-compose down
+```
+
+### Option 2: Run Locally
+
+**Prerequisites:** Python 3.8+, MySQL
+
+```bash
+# Clone the repository
+git clone https://github.com/govicsit/clinicals.git
+cd clinicals
+
+# Create a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Create MySQL database
+mysql -u root -p -e "CREATE DATABASE clinicalsdb;"
+
+# Update database credentials in clinicals/settings.py if needed
+
+# Run migrations
+python manage.py makemigrations
+python manage.py migrate
+
+# Start the development server
+python manage.py runserver
+```
+
+Access the app at `http://localhost:8000`.
+
+## Running Tests
+
+```bash
+# Using SQLite (no MySQL required)
+python manage.py test clinicalsApp
+
+# With Docker
+docker-compose exec web python manage.py test clinicalsApp
+```
