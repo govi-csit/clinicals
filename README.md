@@ -14,7 +14,7 @@ A full-stack web application built with Django for managing patient records and 
 | Layer       | Technology          |
 |-------------|---------------------|
 | Backend     | Python, Django 3.2  |
-| Database    | MySQL (default), SQLite (Docker/testing) |
+| Database    | PostgreSQL (default), SQLite (Docker/testing) |
 | Frontend    | Django Templates, HTML5, CSS3 |
 | Containerization | Docker, Docker Compose |
 
@@ -82,7 +82,7 @@ clinicals/
 
 ### Option 1: Run with Docker (Recommended)
 
-No need to install Python or MySQL locally.
+No need to install Python or PostgreSQL locally.
 
 ```bash
 # Clone the repository
@@ -103,7 +103,7 @@ docker-compose down
 
 ### Option 2: Run Locally
 
-**Prerequisites:** Python 3.8+, MySQL
+**Prerequisites:** Python 3.8+, PostgreSQL
 
 ```bash
 # Clone the repository
@@ -117,8 +117,8 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Create MySQL database
-mysql -u root -p -e "CREATE DATABASE clinicalsdb;"
+# Create PostgreSQL database
+psql -U postgres -c "CREATE DATABASE clinicalsdb;"
 
 # Update database credentials in clinicals/settings.py if needed
 
@@ -135,7 +135,7 @@ Access the app at `http://localhost:8000`.
 ## Running Tests
 
 ```bash
-# Using SQLite (no MySQL required)
+# Using SQLite (no PostgreSQL required)
 python manage.py test clinicalsApp
 
 # With Docker

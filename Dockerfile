@@ -5,12 +5,11 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Install system dependencies for mysqlclient
+# Install system dependencies for psycopg2
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
-    default-libmysqlclient-dev \
-    pkg-config && \
+    libpq-dev && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
